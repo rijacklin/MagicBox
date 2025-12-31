@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\CollectionCardController;
+use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +18,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/cards', [CardController::class, 'index'])->name('cards.index');
+    Route::get('/cards/{card}', [CardController::class, 'show'])->name('cards.show');
+    Route::get('/api/cards/search', [CardController::class, 'search'])->name('cards.search');
+    Route::get('/api/cards/autocomplete', [CardController::class, 'autocomplete'])->name('cards.autocomplete');
+
+    Route::resource('collections', CollectionController::class);
+
+    Route::post('/collections/{collection}/cards', [CollectionCardController::class, 'store'])->name('collections.cards.store');
+    Route::patch('/collections/{collection}/cards/{card}', [CollectionCardController::class, 'update'])->name('collections.cards.update');
+    Route::delete('/collections/{collection}/cards/{card}', [CollectionCardController::class, 'destroy'])->name('collections.cards.destroy');
 });
 
 require __DIR__.'/auth.php';
