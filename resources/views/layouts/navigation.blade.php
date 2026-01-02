@@ -76,6 +76,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('cards.index')" :active="request()->routeIs('cards.*')">
+                {{ __('Search Cards') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('collections.index')" :active="request()->routeIs('collections.*')">
+                {{ __('My Collections') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->

@@ -21,8 +21,10 @@ class ScryfallService
         $this->handleRateLimit();
 
         try {
+            $searchQuery = '!"' . $query . '"';
+
             $response = Http::get("{$this->baseUrl}/cards/search", [
-                'q' => $query,
+                'q' => $searchQuery,
                 'page' => $page,
             ]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Collection;
+use App\Models\CollectionShare;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,17 @@ class CollectionController extends Controller
             ->latest()
             ->get();
 
+        $pendingShares = CollectionShare::query()
+            ->where('user_id', Auth::id())
+            ->whereNull('accepted_at')
+            ->with(['collection.owner', 'sharedBy'])
+            ->latest()
+            ->get();
+
         return view('collections.index', [
             'ownedCollections' => $ownedCollections,
             'sharedCollections' => $sharedCollections,
+            'pendingShares' => $pendingShares,
         ]);
     }
 
@@ -51,12 +60,19 @@ class CollectionController extends Controller
     {
         $this->authorize('view', $collection);
 
-        $collection->load(['cards' => function ($query) {
-            $query->orderBy('name');
-        }]);
+        $collection->load([
+            'cards' => function ($query) {
+                $query->orderBy('name');
+            },
+            'shares.user',
+            'shares.sharedBy',
+        ]);
+
+        $isOwner = $collection->isOwnedBy(Auth::user());
 
         return view('collections.show', [
             'collection' => $collection,
+            'isOwner' => $isOwner,
         ]);
     }
 
